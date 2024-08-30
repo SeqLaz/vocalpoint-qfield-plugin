@@ -135,13 +135,13 @@ Item {
 
   function parseInputText(inputText) {
 
-    let lines = inputText.split("\n");
+    let lines = inputText.split("; ");
 
     let pos = positionSource.projectedPosition;
-    let wkt = 'POINT(' + pos.x + ' ' + pos.y + ')'
+    let wkt = 'POINT(' + pos.x + ' ' + pos.y + ')';
 
-    let geometry = GeometryUtils.createGeometryFromWkt(wkt)
-    let feature = FeatureUtils.createBlankFeature(dashBoard.activeLayer.fields, geometry)
+    let geometry = GeometryUtils.createGeometryFromWkt(wkt);
+    let feature = FeatureUtils.createBlankFeature(dashBoard.activeLayer.fields, geometry);
 
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i].trim();
