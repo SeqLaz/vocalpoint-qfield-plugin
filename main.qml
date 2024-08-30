@@ -121,40 +121,52 @@ Item {
   }
 
   function parseInputText(inputText) {
-    let lines = inputText.split("; ");
+      let lines = inputText.split(";");
 
-    let pos = positionSource.projectedPosition;
-    let wkt = 'POINT(' + pos.x + ' ' + pos.y + ')';
+      let pos = positionSource.projectedPosition;
+      let wkt = 'POINT(' + pos.x + ' ' + pos.y + ')';
 
-    let geometry = GeometryUtils.createGeometryFromWkt(wkt);
-    let feature = FeatureUtils.createBlankFeature(dashBoard.activeLayer.fields, geometry);
+      let geometry = GeometryUtils.createGeometryFromWkt(wkt);
+      let feature = FeatureUtils.createBlankFeature(dashBoard.activeLayer.fields, geometry);
 
-    for (let i = 0; i < lines.length; i++) {
-      let line = lines[i].trim();
+      for (let i = 0; i < lines.length; i++) {
+          let line = lines[i].trim();
 
-      if (line === "") {
-        continue;
+          if (line === "") {
+              continue;
+          }
+
+          let words = line.split(/\s+/);
+
+          let attributeName = words[0].toLowerCase();
+          let firstWord = convertToTitleCase(words[1]);
+          let attributeValue = [firstWord].concat(words.slice(2)).join(" ");
+
+          let attributeIndex = fieldNames.indexOf(attributeName);
+
+          if (attributeIndex === -1) {
+              mainWindow.displayToast(qsTr("Attribute '%1' not found").arg(attributeName), "warning");
+              continue;
+          }
+
+          feature.setAttribute(attributeIndex, attributeValue);
       }
 
-      let words = line.split(/\s+/);
-
-      let attributeName = words[0];
-      let attributeValue = words.slice(1).join(" ");
-
-      let attributeIndex = fieldNames.indexOf(attributeName);
-
-      if (attributeIndex === -1) {
-        mainWindow.displayToast(qsTr("Attribute '%1' not found").arg(attributeName), "warning");
-        continue;
-      }
-
-      feature.setAttribute(attributeIndex, attributeValue);
-    }
-
-    overlayFeatureFormDrawer.featureModel.feature = feature;
-    overlayFeatureFormDrawer.featureModel.resetAttributes(true);
-    overlayFeatureFormDrawer.state = 'Add';
-    overlayFeatureFormDrawer.open();
+      overlayFeatureFormDrawer.featureModel.feature = feature;
+      overlayFeatureFormDrawer.featureModel.resetAttributes(true);
+      overlayFeatureFormDrawer.state = 'Add';
+      overlayFeatureFormDrawer.open();
   }
 
+  function convertToTitleCase(word) {
+      if (!word) {
+          return word;
+      }
+
+      if (!isNaN(word)) {
+          return word;
+      }
+
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  }
 }
