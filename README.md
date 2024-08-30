@@ -29,3 +29,5 @@ Fields with default values evaluated by expressions will function as expected.
   - **Layer Naming**: Layers intended for use with this plugin should be a single word and start with an uppercase letter (e.g., `Point`).
   - **Field Naming**: Fields intended for use with this plugin should be a single word, in all lowercase letters (e.g., `note`). You can enhance the appearance of your form by using "Alias names" for these fields.
   - **Multi-Field Input**: To populate multiple fields, separate each field name and its value with a semicolon.
+
+https://github.com/user-attachments/assets/c605a100-4044-4cae-a521-33e09c6fd2c0
