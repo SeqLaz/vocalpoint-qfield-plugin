@@ -95,18 +95,6 @@ Item {
     ColumnLayout {
       width: parent.width
 
-      ListView {
-        id: fieldListView
-        model: ListModel {
-          id: fieldListModel
-        }
-        delegate: Text {
-          text: modelData
-        }
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-      }
-
       TextArea {
         id: inputTextArea
         placeholderText: qsTr("Enter field values")
@@ -130,11 +118,9 @@ Item {
     onOpened: {
       inputTextArea.text = ""
     }
-
   }
 
   function parseInputText(inputText) {
-
     let lines = inputText.split("; ");
 
     let pos = positionSource.projectedPosition;
@@ -155,23 +141,20 @@ Item {
       let attributeName = words[0];
       let attributeValue = words.slice(1).join(" ");
 
-      feature.setAttribute(fieldNames.indexOf(attributeName), attributeValue)
+      let attributeIndex = fieldNames.indexOf(attributeName);
 
-      
-    }
-
-    overlayFeatureFormDrawer.featureModel.feature = feature
-    overlayFeatureFormDrawer.featureModel.resetAttributes(true)
-    overlayFeatureFormDrawer.state = 'Add'
-    overlayFeatureFormDrawer.open()
-  }
-
-  function findExistingIndex(attributeName) {
-    for (let i = 0; i < fieldListModel.count; i++) {
-      if (fieldListModel.get(i).attributeName.toLowerCase() === attributeName.toLowerCase()) {
-        return i;
+      if (attributeIndex === -1) {
+        mainWindow.displayToast(qsTr("Attribute '%1' not found").arg(attributeName), "warning");
+        continue;
       }
+
+      feature.setAttribute(attributeIndex, attributeValue);
     }
-    return -1; // Not found
+
+    overlayFeatureFormDrawer.featureModel.feature = feature;
+    overlayFeatureFormDrawer.featureModel.resetAttributes(true);
+    overlayFeatureFormDrawer.state = 'Add';
+    overlayFeatureFormDrawer.open();
   }
+
 }
