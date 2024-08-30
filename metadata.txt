@@ -1,6 +1,6 @@
 [general]
-name=Plugin Template
-description=QField plugin template
+name=Vocal QField Plugin
+description=QField plugin that use text recognition for quick digitize notes
 author=OPENGIS.ch
 icon=icon.svg
 version=1.0
