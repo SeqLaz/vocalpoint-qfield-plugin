@@ -48,6 +48,10 @@ Item {
       }
     }
 
+    onOpened: {
+      layerNameInput.forceActiveFocus()
+    }
+
     onAccepted: {
       var layerName = layerNameInput.text.trim()
       if (layerName) {
@@ -58,12 +62,12 @@ Item {
           mainWindow.displayToast(qsTr("Layer '%1' set as active").arg(layerName))
 
           if (!positionSource.active || !positionSource.positionInformation.latitudeValid || !positionSource.positionInformation.longitudeValid) {
-            mainWindow.displayToast(qsTr('It require positioning to be active and returning a valid position'))
+            mainWindow.displayToast(qsTr('It requires positioning to be active and returning a valid position'))
             return
           }
           
           if (dashBoard.activeLayer.geometryType() != Qgis.GeometryType.Point) {
-            mainWindow.displayToast(qsTr('It require the active vector layer to be a point geometry'))
+            mainWindow.displayToast(qsTr('It requires the active vector layer to be a point geometry'))
             return
           }
 
@@ -89,8 +93,8 @@ Item {
     standardButtons: Dialog.Ok | Dialog.Cancel
 
     anchors.centerIn: parent
-    width: Math.min(600, parent.width)
-    height: Math.min(400, parent.height - 50)
+    width: Math.min(700, parent.width)
+    // height: Math.min(300, parent.height - 50)
 
     ColumnLayout {
       width: parent.width
@@ -107,15 +111,16 @@ Item {
       }
     }
 
+    onOpened: {
+      inputTextArea.forceActiveFocus()
+      inputTextArea.text = ""
+    }
+
     onAccepted: {
       parseInputText(inputTextArea.text)
     }
 
     onRejected: {
-      inputTextArea.text = ""
-    }
-
-    onOpened: {
       inputTextArea.text = ""
     }
   }
