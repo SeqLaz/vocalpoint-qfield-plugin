@@ -24,6 +24,8 @@ Item {
   QfToolButton {
     id: selectLayerButton
     bgcolor: Theme.darkGray
+    iconSource: "icon.svg"
+    iconColor: Theme.mainColor
     round: true
 
     onClicked: layerSelectionDialog.open()
