@@ -19,3 +19,12 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: vocalpoint-qfield-plugin_${{ github.ref_name }}.zip
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: false
+
+      - name: Clean up old artifacts
+        run: |
+          echo "Cleaning up old artifacts"
+          rm -rf vocalpoint-qfield-plugin_${{ github.ref_name }}.zip
+          rm -rf vocalpoint-qfield-plugin/
