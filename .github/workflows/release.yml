@@ -1,0 +1,21 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create ZIP Archive
+        run: zip -r vocalpoint-qfield-plugin_${{ github.ref_name }}.zip vocalpoint-qfield-plugin/
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: vocalpoint-qfield-plugin_${{ github.ref_name }}.zip
