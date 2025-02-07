@@ -1,7 +1,7 @@
 [general]
 name=Vocal QField Plugin
 description=QField plugin that use text recognition for quick digitize notes
-author=OPENGIS.ch
+author=Johnny Sequeira (OPENGIS.ch)
 icon=icon.svg
-version=1.0
-homepage=https://www.opengis.ch/
+version=0.1
+homepage=https://github.com/SeqLaz/vocalpoint-qfield-plugin
