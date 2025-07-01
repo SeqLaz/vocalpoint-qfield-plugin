@@ -104,13 +104,19 @@ Item {
 
         ColumnLayout {
             width: parent.width
+            spacing: 10
+
+            TextArea {
+                id: fieldListDisplay
+                placeholderText: qsTr("Enter the available fields and values with the following format")
+                Layout.fillWidth: true
+                readOnly: true
+                wrapMode: TextInput.Wrap
+            }
 
             TextArea {
                 id: inputTextArea
-                placeholderText: qsTr("Enter field values")
-                topPadding: 10
-                bottomPadding: 10
-                rightPadding: 0
+                placeholderText: qsTr("Enter fields values")
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 wrapMode: TextInput.Wrap
@@ -118,6 +124,13 @@ Item {
         }
 
         onOpened: {
+            let fields = fieldNames.names
+            if (fieldNames) {
+                fieldListDisplay.text = fields.join(' value; ') + ' value'
+            } else {
+                fieldListDisplay.text = "No fields found."
+            }
+
             inputTextArea.forceActiveFocus()
             inputTextArea.text = ""
         }
@@ -132,11 +145,11 @@ Item {
     }
 
     function updateLayers() {
-        var layers = ProjectUtils.mapLayers(qgisProject)
-        var editableLayers = []
+        let layers = ProjectUtils.mapLayers(qgisProject)
+        let editableLayers = []
 
-        for (var id in layers) {
-            var layer = layers[id]
+        for (let id in layers) {
+            let layer = layers[id]
 
             if (layer && layer.supportsEditing) {
                 editableLayers.push(layer.name)
