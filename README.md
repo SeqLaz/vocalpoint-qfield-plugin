@@ -26,7 +26,6 @@ Fields with default values evaluated by expressions will function as expected.
 - **Location Services**: Ensure that location services are enabled on your device.
 - **Point Layers**: The plugin currently supports digitization only on Point layers.
 - Due to the behavior of the speech-to-text functionality, the following naming conventions are recommended:
-  - **Layer Naming**: Layers intended for use with this plugin should be a single word and start with an uppercase letter (e.g., `Point`).
   - **Field Naming**: Fields intended for use with this plugin should be a single word, in all lowercase letters (e.g., `note`). You can enhance the appearance of your form by using "Alias names" for these fields.
   - **Multi-Field Input**: To populate multiple fields, separate each field name and its value with a semicolon.
 
