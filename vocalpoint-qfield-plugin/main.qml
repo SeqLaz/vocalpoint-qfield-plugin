@@ -16,7 +16,7 @@ Item {
     property var dashBoard: iface.findItemByObjectName('dashBoard')
     property var overlayFeatureFormDrawer: iface.findItemByObjectName(
                                                'overlayFeatureFormDrawer')
-    property var fieldNames: []
+    property var fields: undefined
 
     Component.onCompleted: {
         iface.addItemToPluginsToolbar(selectLayerButton)
@@ -31,111 +31,96 @@ Item {
 
         onClicked: {
             updateLayers()
-            layerSelectionDialog.open()
+            vocalEntryDialog.open()
         }
     }
 
     Dialog {
-        id: layerSelectionDialog
+        id: vocalEntryDialog
         parent: mainWindow.contentItem
-        title: qsTr("Select a Point Layer")
+        title: qsTr("Vocal Entry")
         standardButtons: Dialog.Ok | Dialog.Cancel
 
         anchors.centerIn: parent
-        width: Math.min(300, parent.width - 50)
+        width: Math.min(700, parent.width - Theme.popupScreenEdgeMargin * 2)
+        height: Math.min(dialogLayout.childrenRect.height + 120, parent.height - Theme.popupScreenEdgeMargin * 2)
 
         ColumnLayout {
+            id: dialogLayout
             width: parent.width
 
-            QfComboBox {
+            Label {
+                Layout.fillWidth: true;
+                wrapMode: TextInput.Wrap
+                text: qsTr("Select a point layer")
+                font: Theme.defaultFont
+                color: Theme.mainTextColor
+            }
+            
+            ComboBox {
                 id: layerSelector
                 Layout.fillWidth: true
                 model: []
                 enabled: model.length > 0
-            }
-        }
+                
+                onCurrentIndexChanged: {
+                    const layerName = layerSelector.currentText
+                    if (layerName != "") {
+                        const layer = qgisProject.mapLayersByName(layerName)[0]
+                        if (layer) {
+                            dashBoard.activeLayer = layer
+                            mainWindow.displayToast(
+                                        qsTr("Layer '%1' set as active").arg(layerName))
 
-        onAccepted: {
-            let layerName = layerSelector.currentText
-            if (layerName) {
-                let layer = qgisProject.mapLayersByName(layerName)[0]
-
-                if (layer) {
-                    dashBoard.activeLayer = layer
-                    dashBoard.ensureEditableLayerSelected()
-                    mainWindow.displayToast(
-                                qsTr("Layer '%1' set as active").arg(layerName))
-
-                    if (!positionSource.active
-                            || !positionSource.positionInformation.latitudeValid
-                            || !positionSource.positionInformation.longitudeValid) {
-                        mainWindow.displayToast(
-                                    qsTr('It requires positioning to be active and returning a valid position'))
-                        return
+                            plugin.fields = dashBoard.activeLayer.fields
+                            fieldNamesHelper.text = plugin.fields.names.join(', ')
+                        }
                     }
-
-                    if (dashBoard.activeLayer.geometryType(
-                                ) !== Qgis.GeometryType.Point) {
-                        mainWindow.displayToast(
-                                    qsTr('It requires the active vector layer to be a point geometry'))
-                        return
-                    }
-
-                    fieldNames = dashBoard.activeLayer.fields
-
-                    fieldSelectionDialog.open()
-                } else {
-                    mainWindow.displayToast(qsTr("Layer '%1' not found").arg(
-                                                layerName), "warning")
-                    return
                 }
             }
-        }
-    }
-
-    Dialog {
-        id: fieldSelectionDialog
-        parent: mainWindow.contentItem
-        title: qsTr("Enter Field Values")
-        standardButtons: Dialog.Ok | Dialog.Cancel
-
-        anchors.centerIn: parent
-        width: Math.min(700, parent.width)
-
-        ColumnLayout {
-            width: parent.width
-            spacing: 10
-
-            TextArea {
-                id: fieldListDisplay
-                placeholderText: qsTr("Enter the available fields and values with the following format")
-                Layout.fillWidth: true
-                readOnly: true
+            
+            Label {
+                Layout.fillWidth: true;
                 wrapMode: TextInput.Wrap
+                text: qsTr("Enter field names and values with a name and value separated by a space and fields separated by semicolon (;) using the virtual keyboard's speech to text")
+                font: Theme.defaultFont
+                color: Theme.mainTextColor
             }
-
-            TextArea {
-                id: inputTextArea
-                placeholderText: qsTr("Enter fields values")
+            ScrollView {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.fillHeight:  true
+                Layout.maximumHeight: 200
+
+                TextArea {
+                    id: inputTextArea
+                    bottomPadding: 10
+                    wrapMode: TextInput.Wrap
+                }
+            }
+            
+            Label {
+                id: fieldNamesHelper
+                Layout.fillWidth: true;
                 wrapMode: TextInput.Wrap
+                font.pointSize: Theme.tipFont.pointSize
+                font.italic: true
+                color: Theme.secondaryTextColor
             }
         }
 
         onOpened: {
-            let fields = fieldNames.names
-            if (fieldNames) {
-                fieldListDisplay.text = fields.join(' value; ') + ' value'
-            } else {
-                fieldListDisplay.text = "No fields found."
-            }
-
-            inputTextArea.forceActiveFocus()
             inputTextArea.text = ""
         }
 
         onAccepted: {
+            if (!positionSource.active
+                    || !positionSource.positionInformation.latitudeValid
+                    || !positionSource.positionInformation.longitudeValid) {
+                mainWindow.displayToast(
+                            qsTr('It requires positioning to be active and returning a valid position'))
+                return
+            }
+
             parseInputText(inputTextArea.text)
         }
 
@@ -145,20 +130,23 @@ Item {
     }
 
     function updateLayers() {
-        let layers = ProjectUtils.mapLayers(qgisProject)
-        let editableLayers = []
+        var layers = ProjectUtils.mapLayers(qgisProject)
+        var editableLayers = []
 
-        for (let id in layers) {
-            let layer = layers[id]
+        for (var id in layers) {
+            var layer = layers[id]
 
-            if (layer && layer.supportsEditing) {
+            if (layer && layer.supportsEditing && layer.geometryType && layer.geometryType() == Qgis.GeometryType.Point) {
                 editableLayers.push(layer.name)
             }
         }
 
         editableLayers.sort()
         layerSelector.model = editableLayers
-        layerSelector.currentIndex = editableLayers.length > 0 ? 0 : -1
+        layerSelector.currentIndex = -1
+        if (editableLayers.length > 0) {
+            layerSelector.currentIndex = 0
+        }
     }
 
     function parseInputText(inputText) {
@@ -184,7 +172,7 @@ Item {
             let firstWord = convertToTitleCase(words[1])
             let attributeValue = [firstWord].concat(words.slice(2)).join(" ")
 
-            let attributeIndex = fieldNames.indexOf(attributeName)
+            let attributeIndex = plugin.fields.indexOf(attributeName)
 
             if (attributeIndex === -1) {
                 mainWindow.displayToast(qsTr("Attribute '%1' not found").arg(
