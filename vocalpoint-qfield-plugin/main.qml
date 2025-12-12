@@ -47,7 +47,9 @@ Item {
 
         ColumnLayout {
             id: dialogLayout
-            width: parent.width
+            anchors.left: parent.left
+            anchors.right: parent.right
+            spacing: 10
 
             Label {
                 Layout.fillWidth: true;
@@ -73,7 +75,7 @@ Item {
                                         qsTr("Layer '%1' set as active").arg(layerName))
 
                             plugin.fields = dashBoard.activeLayer.fields
-                            fieldNamesHelper.text = plugin.fields.names.join(', ')
+                            fieldNamesHelper.text = plugin.fields.names.join('; ')
                         }
                     }
                 }
@@ -81,9 +83,10 @@ Item {
             
             Label {
                 Layout.fillWidth: true;
+                Layout.preferredWidth: parent.width
                 wrapMode: TextInput.Wrap
-                text: qsTr("Enter field names and values with a name and value separated by a space and fields separated by semicolon (;) using the virtual keyboard's speech to text")
-                font: Theme.defaultFont
+                text: qsTr("Use speech-to-text to enter field names and values with a name and values separated by a space and fields separated by semicolon (;).")
+                font.pointSize: Theme.tipFont.pointSize
                 color: Theme.mainTextColor
             }
             ScrollView {
