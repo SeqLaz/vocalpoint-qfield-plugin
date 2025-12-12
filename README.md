@@ -29,4 +29,4 @@ Fields with default values evaluated by expressions will function as expected.
   - **Field Naming**: Fields intended for use with this plugin should be a single word, in all lowercase letters (e.g., `note`). You can enhance the appearance of your form by using "Alias names" for these fields.
   - **Multi-Field Input**: To populate multiple fields, separate each field name and its value with a semicolon.
 
-https://github.com/user-attachments/assets/bcd731aa-b9a7-48e1-878d-3a78dba48338
+https://github.com/user-attachments/assets/efc11778-1bdf-4ee6-b7fd-f48d215f4996
