@@ -42,7 +42,7 @@ Item {
         standardButtons: Dialog.Ok | Dialog.Cancel
 
         anchors.centerIn: parent
-        width: Math.min(700, parent.width - Theme.popupScreenEdgeMargin * 2)
+        width: Math.min(700, parent.width * 0.9)
         height: Math.min(dialogLayout.childrenRect.height + 120, parent.height - Theme.popupScreenEdgeMargin * 2)
 
         ColumnLayout {
@@ -103,8 +103,11 @@ Item {
             
             Label {
                 id: fieldNamesHelper
+                visible: text.length > 0
                 Layout.fillWidth: true;
-                wrapMode: TextInput.Wrap
+                Layout.minimumWidth: 0
+                Layout.preferredWidth: dialogLayout.width
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 font.pointSize: Theme.tipFont.pointSize
                 font.italic: true
                 color: Theme.secondaryTextColor
