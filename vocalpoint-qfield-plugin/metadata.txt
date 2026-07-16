@@ -3,5 +3,5 @@ name=Vocal QField Plugin
 description=Use your device text recognition for quick digitizing point features attributes.
 author=Johnny Sequeira (OPENGIS.ch)
 icon=icon.svg
-version=0.5.0
+version=0.6.0
 homepage=https://github.com/SeqLaz/vocalpoint-qfield-plugin
